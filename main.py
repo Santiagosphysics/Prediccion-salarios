@@ -6,7 +6,7 @@ import numpy as np
 data = pre().creation_data('Salary_Data.csv')
 target, features, names_f = pre().declaration_var(data, 'Salary')
 
-# #Cambiar el tipo de formato
+#Cambiar el tipo de formato
 features['Age'] = features['Age'].astype('int16')
 features['Years of Experience'] = features['Years of Experience'].astype('int64')
 
@@ -33,7 +33,7 @@ print(reg_l)
 
 from sklearn.metrics import r2_score, mean_squared_error
 prediction_linear = linear_model.predict(X_test)
-print(r2_score(y_test, prediction_linear))
-print(mean_squared_error(y_test, prediction_linear))
+print('r2',r2_score(y_test, prediction_linear))
+print('mse', mean_squared_error(y_test, prediction_linear))
 print(np.mean(target))
 print('rmse', np.sqrt(mean_squared_error(y_test, prediction_linear)))
