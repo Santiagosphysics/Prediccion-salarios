@@ -1,6 +1,7 @@
 import pandas as pd 
 import numpy as np 
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics import r2_score, mean_squared_error
 
 class pre:
     def creation_data(self, path_csv):
@@ -39,10 +40,29 @@ class pre:
         features.reset_index(drop=True, inplace=True)
         df_one_hot.reset_index(drop=True, inplace=True)
         features = pd.concat([features, df_one_hot], axis=1)
-        return featuresbarras 
-    
+        return features 
+
     def replace(self, variable, var_1, var_2, features):
         new_values = [var_1 if value == var_1 or value == var_2 else value for value in features[variable]]
         features[variable] = new_values
         return features
 
+    def df_metrics(self, models, X_train,X_test, y_train, y_test):
+        models_metrics = {i:[] for i in range(len(models)) }
+
+        for i in models_metrics:
+            model = models[i].fit(X_train, y_train)
+            prediction = model.predict(X_test)
+            r2 = r2_score(y_test, prediction)
+            mse = mean_squared_error(y_test, prediction)
+            rmse = np.sqrt(mean_squared_error(y_test, prediction))
+            list_1 = [r2,mse,rmse]
+            models_metrics[i] = [round(metrics, 2) for metrics in list_1]
+
+        names = ['LinearRegression', 'Ridge', 'RandomForestRegressor']
+        index_final = ['R2', 'mse', 'rmse']
+
+        models_metrics = pd.DataFrame(data = models_metrics,index = index_final)
+        models_metrics.columns = names
+        
+        return models_metrics

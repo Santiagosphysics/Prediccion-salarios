@@ -2,6 +2,9 @@ from utils import pre
 from pipeline import pipe, column_trans, gen_pipe
 from sklearn.compose import ColumnTransformer
 import numpy as np 
+from sklearn.model_selection import train_test_split 
+import pandas as pd 
+
 
 data = pre().creation_data('Salary_Data.csv')
 target, features, names_f = pre().declaration_var(data, 'Salary')
@@ -22,18 +25,25 @@ cat_features = ['Gender', 'Education Level', 'Job Title']
 num_transformer, cat_transformer = pipe(cat_features, features)
 preprocessor = column_trans(num_transformer, num_features, cat_transformer, cat_features)
 
-from sklearn.model_selection import train_test_split 
 X_train, X_test,y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
 
-linear_model = gen_pipe(preprocessor)
+models = gen_pipe(preprocessor)
 
-reg_l = linear_model.fit(X_train, y_train)
+models_metrics = pre().df_metrics(models, X_train, X_test, y_train, y_test)
+# models_metrics = {i:[] for i in range(len(models)) }
 
-print(reg_l)
+# for i in models_metrics:
+#     model = models[i].fit(X_train, y_train)
+#     prediction = model.predict(X_test)
+#     r2 = r2_score(y_test, prediction)
+#     mse = mean_squared_error(y_test, prediction)
+#     rmse = np.sqrt(mean_squared_error(y_test, prediction))
+#     list_1 = [r2,mse,rmse]
+#     models_metrics[i] = [round(metrics, 2) for metrics in list_1]
 
-from sklearn.metrics import r2_score, mean_squared_error
-prediction_linear = linear_model.predict(X_test)
-print('r2',r2_score(y_test, prediction_linear))
-print('mse', mean_squared_error(y_test, prediction_linear))
-print(np.mean(target))
-print('rmse', np.sqrt(mean_squared_error(y_test, prediction_linear)))
+# names = ['LinearRegression', 'Ridge', 'RandomForestRegressor']
+# index_final = ['R2', 'mse', 'rmse']
+
+# models_metrics = pd.DataFrame(data = models_metrics,index = index_final)
+# models_metrics.columns = names
+print(models_metrics)
